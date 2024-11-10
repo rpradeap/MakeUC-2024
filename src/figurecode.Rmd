@@ -1,0 +1,128 @@
+```{r}
+# Define the file path
+file_path <- "C:/Users/Admin/Desktop/MakeUC/Station_Estimate_data.csv"
+
+# Read the CSV file into a data frame
+df <- read.csv(file_path)
+
+# Display the first few rows of the data frame
+head(df)
+
+```
+
+```{r}
+# Convert the 'date' column to Date type (if not already)
+df$date <- as.Date(df$date)
+
+# Extract year and month from the 'date' column
+df$year_month <- format(df$date, "%Y-%m")  # This creates a 'YYYY-MM' format
+
+# Count occurrences of 'ResumtMeaureValue' per year-month group
+library(dplyr)
+count_data <- df %>%
+  group_by(year_month) %>%
+  summarise(count = sum(!is.na(ResultMeasureValue)))
+
+# Find the year-month with the most 'ResumtMeaureValue' values
+max_count_row <- count_data[which.max(count_data$count), ]
+
+# Display the year-month with the highest count
+print(max_count_row)
+
+
+
+
+```
+
+```{r}
+# Filter data for May 2019
+filtered_data <- df %>%
+  filter(format(date, "%Y-%m") == "2019-05")
+
+# Display the filtered data
+head(filtered_data)
+```
+
+
+```{r}
+
+library(ggplot2)
+library(dplyr)
+
+# Filter the data for May and June 2019 as mentioned
+filtered_data <- df %>%
+  filter(format(date, "%Y-%m") %in% c("2019-05", "2019-06"))
+
+# Create the time series plot with custom styling
+Mono <- ggplot(filtered_data, aes(x = date)) +
+  # Line plot for 'Mean_Estimate' with a bold line and legend label
+  geom_line(aes(y = Mean_Estimate, color = "ML estimate"), size = 1.5) +
+  # Points for 'ResultMeasureValue' when available, with larger points and legend label
+  geom_point(aes(y = ResultMeasureValue, color = "True value"), size = 3, na.rm = TRUE) +
+  # Add text labels to points
+  geom_text(aes(y = ResultMeasureValue, label = sprintf("%.2f", ResultMeasureValue)), 
+            color = "black", size = 2, vjust = -1, na.rm = TRUE) +
+  labs(
+    title = "Phosphorus Estimate in the Monongahela River",
+    x = "Year (2019)",
+    y = "Phosphorus (mg/L)",
+    color = "Legend"
+  ) +
+  scale_color_manual(values = c("ML estimate" = "blue", "True value" = "red")) +
+  theme_minimal() +
+  theme(
+    axis.line = element_line(size = 1.5, color = "black"),
+    panel.grid = element_blank(),
+    axis.title = element_text(face = "bold", size = 14),
+    axis.text = element_text(face = "bold", size = 14),
+    plot.title = element_text(size = 20, face = "bold", hjust = 0.5)
+  )
+
+
+# Save the plot
+ggsave("C:/Users/Admin/Downloads/MakeUC/stationfigures/Mono_river.jpg", plot = Mono)
+
+```
+
+
+
+
+```{r}
+# Load necessary libraries
+library(gganimate)
+library(ggplot2)
+
+# Create plot
+plot <- ggplot(filtered_data, aes(x = date)) +
+  # Line plot for 'Mean_Estimate' with a bold line and legend label
+  geom_line(aes(y = Mean_Estimate, color = "ML estimate"), size = 1.5) +
+  # Points for 'ResultMeasureValue' when available, with larger points and legend label
+  geom_point(aes(y = ResultMeasureValue, color = "True value"), size = 3, na.rm = TRUE) +
+  # Add text labels to points
+  geom_text(aes(y = ResultMeasureValue, label = sprintf("%.2f", ResultMeasureValue)), 
+            color = "black", size = 2, vjust = -1, na.rm = TRUE) +
+  labs(
+    title = "Phosphorus Estimate in the Monongahela River",
+    x = "Year (2019)",
+    y = "Phosphorus (mg/L)",
+    color = "Legend"
+  ) +
+  scale_color_manual(values = c("ML estimate" = "blue", "True value" = "red")) +
+  theme_minimal() +
+  theme(
+    axis.line = element_line(size = 1.5, color = "black"),
+    panel.grid = element_blank(),
+    axis.title = element_text(face = "bold", size = 14),
+    axis.text = element_text(face = "bold", size = 14),
+    plot.title = element_text(size = 20, face = "bold", hjust = 0.5)
+  ) +
+  transition_reveal(date)
+
+# Create animation with specific size and resolution
+anim <- animate(plot, nframes = 100, fps = 10, width = 15, height = 8, units = "in", res = 300)
+
+# Save the animation as a GIF
+anim_save("C:\\Users\\Admin\\Downloads\\MakeUC\\stationfigures\\Mono_river.gif", animation = anim)
+
+
+```
