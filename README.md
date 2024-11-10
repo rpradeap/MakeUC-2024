@@ -1,4 +1,4 @@
-# Daily Estimation of Phosphorus in the Ohio River Basin Using a Machine Learning Model
+# Daily Estimation of Phosphorus in the Ohio River Basin Using a Remote Sensing Driven Machine Learning Model
 
 Phosphorus is a vital nutrient found in river systems, essential for aquatic life. However, excessive phosphorus levels can have detrimental effects on human health, wildlife, ecosystems, and the economy. High concentrations of phosphorus often lead to harmful algal blooms, eutrophication, and oxygen depletion, severely disrupting aquatic environments.
 
